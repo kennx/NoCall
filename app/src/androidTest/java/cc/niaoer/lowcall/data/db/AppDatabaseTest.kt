@@ -70,4 +70,55 @@ class AppDatabaseTest {
         assertEquals(CallAction.BLOCKED, retrieved.action)
         assertNull(retrieved.allowReason)
     }
+
+    @Test
+    fun testCallLogStatsFlows() = runBlocking {
+        assertEquals(0, callLogDao.getTotalBlockedCountFlow().first())
+        assertEquals(0, callLogDao.getBlockedCountSinceFlow(1000L).first())
+        assertEquals(0, callLogDao.getRecentBlockedFlow(5).first().size)
+
+        val logAllowed = CallLog(
+            phoneNumber = "13800138001",
+            action = CallAction.ALLOWED,
+            timestamp = 500L
+        )
+        callLogDao.insert(logAllowed)
+
+        assertEquals(0, callLogDao.getTotalBlockedCountFlow().first())
+
+        val logBlockedBefore = CallLog(
+            phoneNumber = "13800138002",
+            action = CallAction.BLOCKED,
+            timestamp = 500L
+        )
+        callLogDao.insert(logBlockedBefore)
+
+        assertEquals(1, callLogDao.getTotalBlockedCountFlow().first())
+        assertEquals(0, callLogDao.getBlockedCountSinceFlow(1000L).first())
+
+        val logBlockedAfter1 = CallLog(
+            phoneNumber = "13800138003",
+            action = CallAction.BLOCKED,
+            timestamp = 1500L
+        )
+        callLogDao.insert(logBlockedAfter1)
+
+        assertEquals(2, callLogDao.getTotalBlockedCountFlow().first())
+        assertEquals(1, callLogDao.getBlockedCountSinceFlow(1000L).first())
+
+        val logBlockedAfter2 = CallLog(
+            phoneNumber = "13800138004",
+            action = CallAction.BLOCKED,
+            timestamp = 2000L
+        )
+        callLogDao.insert(logBlockedAfter2)
+
+        assertEquals(3, callLogDao.getTotalBlockedCountFlow().first())
+        assertEquals(2, callLogDao.getBlockedCountSinceFlow(1000L).first())
+
+        val recent = callLogDao.getRecentBlockedFlow(2).first()
+        assertEquals(2, recent.size)
+        assertEquals("13800138004", recent[0].phoneNumber)
+        assertEquals("13800138003", recent[1].phoneNumber)
+    }
 }

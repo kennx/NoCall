@@ -26,4 +26,13 @@ interface CallLogDao {
 
     @Query("SELECT * FROM call_logs WHERE action = 'BLOCKED' ORDER BY timestamp DESC LIMIT :limit")
     suspend fun getRecentBlocked(limit: Int): List<CallLog>
+
+    @Query("SELECT COUNT(*) FROM call_logs WHERE action = 'BLOCKED'")
+    fun getTotalBlockedCountFlow(): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM call_logs WHERE action = 'BLOCKED' AND timestamp >= :startOfDay")
+    fun getBlockedCountSinceFlow(startOfDay: Long): Flow<Int>
+
+    @Query("SELECT * FROM call_logs WHERE action = 'BLOCKED' ORDER BY timestamp DESC LIMIT :limit")
+    fun getRecentBlockedFlow(limit: Int): Flow<List<CallLog>>
 }
