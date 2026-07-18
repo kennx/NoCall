@@ -283,7 +283,8 @@
                               when (log.allowReason) {
                                   "whitelist" -> stringResource(R.string.allowed_whitelist)
                                   "contacts" -> stringResource(R.string.allowed_contacts)
-                                  else -> stringResource(R.string.allowed_no_match)
+                                  "no_match" -> stringResource(R.string.allowed_no_match)
+                                  else -> stringResource(R.string.allowed) // Legacy fallback: "已放行"
                               }
                           },
                           style = MaterialTheme.typography.bodySmall,
