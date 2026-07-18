@@ -19,5 +19,6 @@ data class CallLog(
     @ColumnInfo(name = "action") val action: CallAction,
     @ColumnInfo(name = "timestamp") val timestamp: Long = System.currentTimeMillis(),
     @ColumnInfo(name = "location") val location: String? = null,
-    @ColumnInfo(name = "carrier") val carrier: String? = null
+    @ColumnInfo(name = "carrier") val carrier: String? = null,
+    @ColumnInfo(name = "allow_reason") val allowReason: String? = null
 )

@@ -30,8 +30,10 @@ class MainActivityNavigationTest {
         // Start on Home: assert greeting is shown
         composeTestRule.onNodeWithText(targetContext.getString(R.string.home_greeting)).assertExists()
 
-        // Click the 拦截规则 card on Home (use its hint text to avoid the bottom nav item)
-        composeTestRule.onNodeWithText(targetContext.getString(R.string.quick_rules_hint)).performClick()
+        // Click 拦截规则 in bottom nav
+        composeTestRule.onNode(
+            hasText(targetContext.getString(R.string.rules_title)) and hasClickAction()
+        ).performClick()
         composeTestRule.waitForIdle()
 
         // Assert we are on Rules screen (FAB for adding rules)
