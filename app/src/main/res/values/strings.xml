@@ -71,4 +71,7 @@
     <string name="attribution_format">%1$s · %2$s</string>
     <string name="back">返回</string>
     <string name="search">搜索</string>
+    <string name="allowed_whitelist">已放行 · 白名单匹配</string>
+    <string name="allowed_contacts">已放行 · 联系人匹配</string>
+    <string name="allowed_no_match">已放行 · 无匹配规则</string>
 </resources>

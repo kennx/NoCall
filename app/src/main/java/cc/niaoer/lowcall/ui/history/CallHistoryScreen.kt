@@ -211,7 +211,12 @@ private fun CallLogItem(
                         text = if (isBlocked) {
                             "${log.matchedRulePattern ?: "未知规则"} · 响铃 0 秒"
                         } else {
-                            "已放行 · 白名单匹配"
+                            when (log.allowReason) {
+                                "whitelist" -> stringResource(R.string.allowed_whitelist)
+                                "contacts" -> stringResource(R.string.allowed_contacts)
+                                "no_match" -> stringResource(R.string.allowed_no_match)
+                                else -> stringResource(R.string.allowed) // Legacy fallback: "已放行"
+                            }
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
