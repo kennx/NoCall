@@ -1,13 +1,17 @@
 package cc.niaoer.lowcall.ui.home
 
+import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import cc.niaoer.lowcall.AppContainer
 import cc.niaoer.lowcall.LowCallApplication
+import cc.niaoer.lowcall.data.db.AppDatabase
 import cc.niaoer.lowcall.data.model.CallAction
 import cc.niaoer.lowcall.data.model.CallLog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
@@ -20,14 +24,21 @@ class HomeViewModelTest {
 
     private lateinit var app: LowCallApplication
     private lateinit var viewModel: HomeViewModel
+    private lateinit var db: AppDatabase
 
     @Before
     fun setUp() {
         app = ApplicationProvider.getApplicationContext<LowCallApplication>()
-        runBlocking {
-            app.appContainer.callLogDao.deleteAll()
-        }
+        db = Room.inMemoryDatabaseBuilder(app, AppDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+        app.appContainer = AppContainer(app, db)
         viewModel = HomeViewModel(app)
+    }
+
+    @After
+    fun tearDown() {
+        db.close()
     }
 
     @Test
