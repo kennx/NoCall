@@ -25,10 +25,12 @@ class HomeViewModelTest {
     private lateinit var app: LowCallApplication
     private lateinit var viewModel: HomeViewModel
     private lateinit var db: AppDatabase
+    private lateinit var originalContainer: AppContainer
 
     @Before
     fun setUp() {
         app = ApplicationProvider.getApplicationContext<LowCallApplication>()
+        originalContainer = app.appContainer
         db = Room.inMemoryDatabaseBuilder(app, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
@@ -39,6 +41,7 @@ class HomeViewModelTest {
     @After
     fun tearDown() {
         db.close()
+        app.appContainer = originalContainer
     }
 
     @Test
