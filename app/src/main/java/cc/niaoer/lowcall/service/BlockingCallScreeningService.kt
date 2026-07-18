@@ -37,18 +37,23 @@ class BlockingCallScreeningService : CallScreeningService() {
 
             val normalized = cc.niaoer.lowcall.data.normalizePhone(phoneNumber)
 
-            val inWhitelist = container.whitelistDao.exists(normalized) ||
+            val isWhitelisted = container.whitelistDao.exists(normalized)
+            val isInContactsList = if (!isWhitelisted) {
                 withTimeoutOrNull(CONTACT_LOOKUP_TIMEOUT_MS) {
                     isInContacts(this@BlockingCallScreeningService, phoneNumber)
                 } ?: false
+            } else {
+                false
+            }
 
-            if (inWhitelist) {
+            if (isWhitelisted || isInContactsList) {
                 container.callLogDao.insert(
                     CallLog(
                         phoneNumber = phoneNumber,
                         location = location,
                         carrier = carrier,
                         action = CallAction.ALLOWED,
+                        allowReason = if (isWhitelisted) "whitelist" else "contacts",
                         timestamp = System.currentTimeMillis()
                     )
                 )
@@ -97,6 +102,7 @@ class BlockingCallScreeningService : CallScreeningService() {
                         location = location,
                         carrier = carrier,
                         action = CallAction.ALLOWED,
+                        allowReason = "no_match",
                         timestamp = System.currentTimeMillis()
                     )
                 )
